@@ -1,10 +1,13 @@
 import { createBrowserRouter, Navigate } from "react-router"
+import { PlaceholderPage } from "@/components/PlaceholderPage"
+import { ADMIN_PAGE_TITLES } from "@/constants/navigation"
+import { USER_ROLES } from "@/constants/userRoles"
 import { AdminLayout } from "@/layouts/AdminLayout"
 import { AuthLayout } from "@/layouts/AuthLayout"
+import { PublicLayout } from "@/layouts/PublicLayout"
 import { DashboardPage } from "@/pages/admin/DashboardPage"
-import { LandingPage } from "@/pages/public/LandingPage"
+import { HomePage } from "@/pages/public/HomePage"
 import { LoginPage } from "@/pages/public/LoginPage"
-import { SignupPage } from "@/pages/public/SignupPage"
 import { NotFoundPage, UnauthorizedPage } from "@/pages/public/StatusPage"
 import { StudentHomePage } from "@/pages/student/StudentHomePage"
 import { PATHS } from "./paths"
@@ -12,48 +15,55 @@ import { ProtectedRoute } from "./ProtectedRoute"
 import { PublicOnlyRoute } from "./PublicOnlyRoute"
 
 export const router = createBrowserRouter([
-  // Public
-  { path: PATHS.home, element: <LandingPage /> },
-  { path: PATHS.unauthorized, element: <UnauthorizedPage /> },
-
-  // Public-only (redirects logged-in users to their home page)
+  // Public pages share the background image from PublicLayout
   {
-    element: <PublicOnlyRoute />,
+    element: <PublicLayout />,
     children: [
+      { path: PATHS.home, element: <HomePage /> },
+      { path: PATHS.unauthorized, element: <UnauthorizedPage /> },
+
+      // Public only: logged-in users are redirected to their home page
       {
-        element: <AuthLayout />,
+        element: <PublicOnlyRoute />,
         children: [
-          { path: PATHS.login, element: <LoginPage /> },
-          { path: PATHS.signup, element: <SignupPage /> },
+          {
+            element: <AuthLayout />,
+            children: [{ path: PATHS.login, element: <LoginPage /> }],
+          },
         ],
       },
+
+      { path: PATHS.notFound, element: <NotFoundPage /> },
     ],
   },
 
-  // Admin (protected)
+  // Admin: sidebar + top bar. Pages not built yet show a placeholder.
   {
-    path: "/admin",
-    element: <ProtectedRoute allowedRoles={["admin"]} />,
+    path: PATHS.admin,
+    element: <ProtectedRoute allowedRoles={[USER_ROLES.ADMIN]} />,
     children: [
       {
         element: <AdminLayout />,
         children: [
           { index: true, element: <Navigate to={PATHS.adminDashboard} replace /> },
-          { path: "dashboard", element: <DashboardPage /> },
+          { path: PATHS.adminDashboard, element: <DashboardPage /> },
+          { path: PATHS.adminStudents, element: <PlaceholderPage title={ADMIN_PAGE_TITLES.STUDENTS} /> },
+          { path: PATHS.adminBatches, element: <PlaceholderPage title={ADMIN_PAGE_TITLES.BATCHES} /> },
+          { path: PATHS.adminAttendance, element: <PlaceholderPage title={ADMIN_PAGE_TITLES.ATTENDANCE} /> },
+          { path: PATHS.adminFees, element: <PlaceholderPage title={ADMIN_PAGE_TITLES.FEES} /> },
+          { path: PATHS.adminSettings, element: <PlaceholderPage title={ADMIN_PAGE_TITLES.SETTINGS} /> },
         ],
       },
     ],
   },
 
-  // Student (protected) — portal on hold, placeholder only
+  // Student (portal on hold, placeholder only)
   {
-    path: "/student",
-    element: <ProtectedRoute allowedRoles={["student"]} />,
+    path: PATHS.student,
+    element: <ProtectedRoute allowedRoles={[USER_ROLES.STUDENT]} />,
     children: [
       { index: true, element: <Navigate to={PATHS.studentHome} replace /> },
-      { path: "home", element: <StudentHomePage /> },
+      { path: PATHS.studentHome, element: <StudentHomePage /> },
     ],
   },
-
-  { path: "*", element: <NotFoundPage /> },
 ])

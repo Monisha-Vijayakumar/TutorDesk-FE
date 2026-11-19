@@ -81,6 +81,23 @@
     --sidebar-accent-foreground: oklch(0.205 0 0);
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.708 0 0);
+
+    /* Toast colours per type (used by src/components/ui/sonner.tsx) */
+    --toast-success-bg: #ecfdf3;
+    --toast-success-text: #067647;
+    --toast-success-border: #abefc6;
+    --toast-error-bg: #fef3f2;
+    --toast-error-text: #b42318;
+    --toast-error-border: #fecdca;
+    --toast-warning-bg: #fffaeb;
+    --toast-warning-text: #b54708;
+    --toast-warning-border: #fedf89;
+    --toast-info-bg: #eff8ff;
+    --toast-info-text: #175cd3;
+    --toast-info-border: #b2ddff;
+    --toast-loading-bg: #f8fafc;
+    --toast-loading-text: #475569;
+    --toast-loading-border: #e2e8f0;
 }
 
 .dark {

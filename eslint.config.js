@@ -18,6 +18,22 @@ export default defineConfig([
     languageOptions: {
       globals: globals.browser,
     },
+    rules: {
+      // XSS guard: render HTML strings only through <SafeHtml> (DOMPurify).
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: "JSXAttribute[name.name='dangerouslySetInnerHTML']",
+          message: 'Use <SafeHtml html={...} /> from @/components/SafeHtml so the HTML is sanitized with DOMPurify.',
+        },
+      ],
+    },
+  },
+  {
+    files: ['src/components/SafeHtml.tsx'],
+    rules: {
+      'no-restricted-syntax': 'off',
+    },
   },
   {
     // shadcn-generated components export variants (e.g. buttonVariants) alongside components.

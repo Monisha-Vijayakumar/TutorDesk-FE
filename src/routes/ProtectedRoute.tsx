@@ -1,26 +1,26 @@
 import { Navigate, Outlet, useLocation } from "react-router"
 import { FullPageLoader } from "@/components/FullPageLoader"
+import type { LoginRedirectState, ProtectedRouteProps } from "@/interfaces/routes"
+import { selectCurrentUser, selectIsSessionChecked } from "@/store/authSlice"
 import { useAppSelector } from "@/store/hooks"
-import type { Role } from "@/types/auth"
 import { PATHS } from "./paths"
 
-interface ProtectedRouteProps {
-  /** Roles allowed through. Omit to allow any logged-in user. */
-  allowedRoles?: Role[]
-}
-
-/** Requires a logged-in user (and optionally a role) — FR-6. */
-export function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
-  const { user, sessionStatus } = useAppSelector((state) => state.auth)
+export const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
+  const currentUser = useAppSelector(selectCurrentUser)
+  const isSessionChecked = useAppSelector(selectIsSessionChecked)
   const location = useLocation()
 
-  if (sessionStatus !== "ready") return <FullPageLoader />
-
-  if (!user) {
-    return <Navigate to={PATHS.login} replace state={{ from: location.pathname }} />
+  if (!isSessionChecked) {
+    return <FullPageLoader />
   }
 
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
+  if (!currentUser) {
+    const redirectState: LoginRedirectState = { requestedPath: location.pathname }
+    return <Navigate to={PATHS.login} replace state={redirectState} />
+  }
+
+  const isRoleAllowed = !allowedRoles || allowedRoles.includes(currentUser.role)
+  if (!isRoleAllowed) {
     return <Navigate to={PATHS.unauthorized} replace />
   }
 

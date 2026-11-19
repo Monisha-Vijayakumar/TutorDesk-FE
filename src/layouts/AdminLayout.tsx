@@ -1,42 +1,60 @@
-import { GraduationCap, LogOut } from "lucide-react"
-import { Outlet, useNavigate } from "react-router"
-import { Button } from "@/components/ui/button"
-import { PATHS } from "@/routes/paths"
-import { logoutUser } from "@/store/authSlice"
-import { useAppDispatch, useAppSelector } from "@/store/hooks"
+import { useState } from "react"
+import { Menu } from "lucide-react"
+import { Outlet } from "react-router"
+import { AppLogo } from "@/components/AppLogo"
+import { AdminUserMenu } from "@/components/layout/AdminUserMenu"
+import { SidebarNav } from "@/components/layout/SidebarNav"
+import { buttonVariants } from "@/components/ui/button"
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import { ADMIN_NAV_ITEMS } from "@/constants/navigation"
+import { cn } from "@/lib/utils"
+import { selectCurrentUser } from "@/store/authSlice"
+import { useAppSelector } from "@/store/hooks"
 
-/**
- * Placeholder admin shell. The sidebar (Dashboard, Students, Batches,
- * Attendance, Fees, Settings) and notification bell come in a later milestone.
- */
-export function AdminLayout() {
-  const dispatch = useAppDispatch()
-  const navigate = useNavigate()
-  const user = useAppSelector((state) => state.auth.user)
-
-  async function handleLogout() {
-    await dispatch(logoutUser())
-    navigate(PATHS.login, { replace: true })
-  }
+// Admin shell: sidebar on desktop, slide-out drawer on phones, top bar with the profile menu.
+// The notification bell is added in the notifications milestone.
+export const AdminLayout = () => {
+  const currentUser = useAppSelector(selectCurrentUser)
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false)
 
   return (
-    <div className="flex min-h-svh flex-col">
-      <header className="flex h-14 items-center justify-between border-b px-4">
-        <div className="flex items-center gap-2 font-heading font-semibold">
-          <GraduationCap className="size-5" />
-          {user?.centerName ?? "TutorDesk"}
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="hidden text-sm text-muted-foreground sm:inline">{user?.name}</span>
-          <Button variant="ghost" size="sm" onClick={handleLogout}>
-            <LogOut />
-            Log out
-          </Button>
-        </div>
-      </header>
-      <main className="flex-1 p-4 sm:p-6">
-        <Outlet />
-      </main>
+    <div className="flex min-h-svh bg-muted/30">
+      <aside className="sticky top-0 hidden h-svh w-60 shrink-0 flex-col gap-6 border-r bg-background p-4 md:flex">
+        <AppLogo />
+        <SidebarNav items={ADMIN_NAV_ITEMS} />
+      </aside>
+
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="sticky top-0 z-40 flex h-14 items-center gap-3 border-b bg-background px-4">
+          <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
+            <SheetTrigger
+              aria-label="Open navigation menu"
+              className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "md:hidden")}
+            >
+              <Menu />
+            </SheetTrigger>
+            <SheetContent side="left" className="w-64 gap-6 p-4">
+              <SheetTitle>
+                <AppLogo />
+              </SheetTitle>
+              <SidebarNav items={ADMIN_NAV_ITEMS} onNavigate={() => setIsMobileNavOpen(false)} />
+            </SheetContent>
+          </Sheet>
+
+          <AppLogo className="md:hidden" />
+          <p className="hidden text-sm font-medium text-muted-foreground md:block">
+            {currentUser?.centerName}
+          </p>
+
+          <div className="ml-auto">
+            <AdminUserMenu />
+          </div>
+        </header>
+
+        <main className="flex-1 p-4 sm:p-6">
+          <Outlet />
+        </main>
+      </div>
     </div>
   )
 }
