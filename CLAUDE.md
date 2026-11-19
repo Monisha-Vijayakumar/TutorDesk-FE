@@ -60,7 +60,7 @@ Current:
 - `src/components/` — shared app components (`AppLogo`, `PlaceholderPage`, `layout/SidebarNav`, `layout/AdminUserMenu`, `FormField`, `FullPageLoader`, `TextLink`, `SafeHtml` (DOMPurify-sanitized HTML), `AuthFormCard` — card + form + submit button used by login, later change password)
 - `src/constants/` — `app.ts` (`APP_NAME`, `DEFAULT_API_BASE_URL`), `userRoles.ts` (`USER_ROLES`), `navigation.ts` (`ADMIN_PAGE_TITLES`, `ADMIN_NAV_ITEMS`), `actionTypes.ts` (`AUTH_SLICE_NAME`, `AUTH_ACTION_TYPES` — Redux action names, not URLs), `validation.ts` (`ALPHA_LOCALE`, `ALPHA_WITH_SPACES_OPTIONS`, `ALPHA_WITH_PUNCTUATION_OPTIONS`, `STUDENT_CODE_PREFIX`, `STUDENT_CODE_DIGIT_COUNT`, `VALIDATION_MESSAGES` — the one file for all validation messages))
 - `src/hooks/` — `useForm` (form values + errors + `getFieldProps(fieldName)` for `FormField`), `useLogout` (logout + redirect to login)
-- `src/layouts/` — `PublicLayout` (background image for Home, Login, 404, Unauthorized), `AuthLayout` (logo + centred login card), `AdminLayout` (sidebar + top bar with center name and `AdminUserMenu`; sidebar is a `Sheet` drawer on phones)
+- `src/layouts/` — `PublicLayout` (background photo + light overlay for Home, Login, 404, Unauthorized), `AuthLayout` (logo + centred login card), `AdminLayout` (sidebar + top bar with center name and `AdminUserMenu`; sidebar is a `Sheet` drawer on phones)
 - `src/pages/public/` — `HomePage` (Login button only), `LoginPage` (one form: admin email or Student ID), `StatusPage` (404 + Unauthorized). On submit: `sanitizeFormValues` → `validateXxxForm` (imported from `utils/authValidation.ts`) → payload built from sanitized values.
 - `src/pages/admin/DashboardPage.tsx`, `src/pages/student/StudentHomePage.tsx` — placeholders
 - `src/routes/` — `router.tsx` (route config), `paths.ts` (`PATHS`, `getHomePathForRole`, `isPathAllowedForRole`, `getPathAfterLogin`), `ProtectedRoute` (auth + `allowedRoles`), `PublicOnlyRoute` (redirects logged-in users home)
@@ -120,6 +120,8 @@ Target structure (REQUIREMENTS §9.1): `components/`, `layouts/` (AdminLayout, S
 ## Decisions Log
 
 Record decisions made in conversation here (newest first, with date).
+
+- 2026-11-19 — Public background replaced with a free Unsplash photo (Jess Bailey, "Glasses, notebooks, and pencils on a white desk", https://unsplash.com/photos/k5BvNg8-SRA) as `assets/backgrounds/publicBackground.webp` (1920px, ~89 KB) with a white overlay (`bg-background/50`, `sm:/25`). Old SVG background removed. Only free-licensed images (e.g. Unsplash License) — not arbitrary Google results. Interim until a final brand image.
 
 - 2026-11-19 — Dev-only mock auth until the BE exists: `api/mocks/mockAuthService.ts` (demo admin + student), chosen in `authService.ts` via `IS_MOCK_API_ENABLED` (`import.meta.env.DEV && VITE_USE_MOCK_API === "true"`); demo session kept in `sessionStorage` (mock only — real auth still uses the httpOnly cookie). Verified the production bundle contains no demo credentials. Added `AuthService` / `DemoAccount` interfaces.
 

@@ -156,7 +156,7 @@ Implemented in levels; Level 1 is part of core, others are optional.
 ## 5. Pages & UI
 
 ### 5.1 Public pages
-All public pages (Home, Login, 404, Unauthorized) share `PublicLayout`: a light, clean background image (`src/assets/backgrounds/publicBackground.svg` — soft gradient, blurred colour shapes, faint dot grid that fades out behind the content) and the TutorDesk logo.
+All public pages (Home, Login, 404, Unauthorized) share `PublicLayout`: a bright, clean background photo (`src/assets/backgrounds/publicBackground.webp` — "Glasses, notebooks, and pencils on a white desk" by Jess Bailey on Unsplash, free Unsplash License, 1920px WebP ~89 KB) with a light white overlay for readability (stronger on phones), plus the TutorDesk logo. Placeholder until a final brand image is chosen.
 | # | Page | Route | Contents |
 |---|---|---|---|
 | 1 | Home | `/` | Shared by the admin and students: app name, a pitch that speaks to both ("Tutors manage students, batches, attendance and fees. Students check attendance, fee status and batch timings."), a **Login** button only (no signup/registration), and a note that students log in with the Student ID from their tutor. |
