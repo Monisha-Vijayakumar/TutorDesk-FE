@@ -2,7 +2,7 @@ import { ADMIN_PAGE_TITLES } from "@/constants/navigation"
 import { selectCurrentUser } from "@/store/authSlice"
 import { useAppSelector } from "@/store/hooks"
 
-// Placeholder. Stat cards, today's batches and charts come in the Dashboard milestone.
+// Placeholder. Stat cards and charts come in the Dashboard milestone.
 export const DashboardPage = () => {
   const currentUser = useAppSelector(selectCurrentUser)
 

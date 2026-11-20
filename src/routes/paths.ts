@@ -10,7 +10,6 @@ export const PATHS = {
   admin: "/admin",
   adminDashboard: "/admin/dashboard",
   adminStudents: "/admin/students",
-  adminBatches: "/admin/batches",
   adminAttendance: "/admin/attendance",
   adminFees: "/admin/fees",
   adminSettings: "/admin/settings",

@@ -1,6 +1,7 @@
 import { useEffect } from "react"
 import { RouterProvider } from "react-router"
 import { Toaster } from "@/components/ui/sonner"
+import { TooltipProvider } from "@/components/ui/tooltip"
 import { TOAST_DURATION_MS, TOAST_POSITION } from "@/constants/app"
 import { router } from "@/routes/router"
 import { fetchCurrentUser } from "@/store/authSlice"
@@ -15,10 +16,10 @@ const App = () => {
   }, [dispatch])
 
   return (
-    <>
+    <TooltipProvider>
       <RouterProvider router={router} />
       <Toaster position={TOAST_POSITION} duration={TOAST_DURATION_MS} />
-    </>
+    </TooltipProvider>
   )
 }
 

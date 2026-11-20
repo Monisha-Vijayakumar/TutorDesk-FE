@@ -1,3 +1,4 @@
+import { RequiredFieldsNote } from "@/components/RequiredFieldMarkers"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -30,10 +31,14 @@ export const AuthFormCard = ({
       </CardHeader>
 
       <form onSubmit={onSubmit} noValidate className="contents">
-        <CardContent className="gap-4">{children}</CardContent>
+        <CardContent className="gap-4">
+          {/* Every auth form (login, change password) has required fields. */}
+          <RequiredFieldsNote />
+          {children}
+        </CardContent>
 
         <CardFooter className="flex-col gap-3">
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
+          <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
             {isSubmitting ? submittingLabel : submitLabel}
           </Button>
           {footer && <p className="text-center text-sm text-muted-foreground">{footer}</p>}

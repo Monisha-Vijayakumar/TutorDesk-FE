@@ -13,6 +13,8 @@ export interface AuthState {
   user: User | null
   // True once the "who is logged in?" check on app load has finished.
   isSessionChecked: boolean
+  // True when a request answered 401 and the user was logged out; the login page then says why.
+  isSessionExpired: boolean
 }
 
 export interface AuthFormCardProps {

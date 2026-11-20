@@ -1,10 +1,12 @@
 import type { AuthService, DemoAccount, LoginPayload, User } from "@/api/interfaces/auth"
+import { HTTP_STATUS } from "@/api/httpStatus"
 import { USER_ROLES } from "@/constants/userRoles"
+import { createMockApiError } from "./mockApiError"
+import { waitForMockDelay } from "./mockDelay"
 
 // DEV ONLY — demo logins while tutordesk-be isn't ready. Used when VITE_USE_MOCK_API=true
 // in `npm run dev` (see IS_MOCK_API_ENABLED). These are fake demo credentials, not real ones.
 
-const MOCK_DELAY_MS = 500
 const DEMO_SESSION_STORAGE_KEY = "tutordesk-demo-user-id"
 
 export const DEMO_ACCOUNTS: DemoAccount[] = [
@@ -32,10 +34,6 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
   },
 ]
 
-const waitForMockDelay = (): Promise<void> => {
-  return new Promise((resolve) => setTimeout(resolve, MOCK_DELAY_MS))
-}
-
 const login = async (payload: LoginPayload): Promise<User> => {
   await waitForMockDelay()
 
@@ -43,7 +41,7 @@ const login = async (payload: LoginPayload): Promise<User> => {
     (account) => account.identifier === payload.identifier && account.password === payload.password
   )
   if (!matchingAccount) {
-    throw new Error("Invalid demo credentials")
+    throw createMockApiError(HTTP_STATUS.UNAUTHORIZED, "Invalid email, Student ID or password.")
   }
 
   // Remember the demo user for this tab so a page refresh keeps them logged in.
@@ -61,7 +59,7 @@ const getCurrentUser = async (): Promise<User> => {
   const savedUserId = sessionStorage.getItem(DEMO_SESSION_STORAGE_KEY)
   const savedAccount = DEMO_ACCOUNTS.find((account) => account.user.id === savedUserId)
   if (!savedAccount) {
-    throw new Error("No demo session")
+    throw createMockApiError(HTTP_STATUS.UNAUTHORIZED, "Not logged in.")
   }
 
   return savedAccount.user

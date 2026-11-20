@@ -7,7 +7,11 @@ export interface User {
   name: string
   email?: string // admin login email; for students only optional contact info (they can't log in with it)
   role: UserRole
+  // Admin only (center details, editable in Settings later). centerName signs the WhatsApp reminders.
   centerName?: string
+  branch?: string | null
+  city?: string
+  state?: string
   studentCode?: string // students only: login "Student ID", e.g. S100000001
   mustChangePassword?: boolean // true until a student replaces the temporary password
 }

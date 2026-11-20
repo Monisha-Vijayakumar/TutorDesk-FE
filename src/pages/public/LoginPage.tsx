@@ -1,16 +1,17 @@
-import { useState, type SubmitEvent } from "react"
+import { useEffect, useState, type SubmitEvent } from "react"
 import { useLocation, useNavigate } from "react-router"
 import { toast } from "sonner"
 import { ERROR_MESSAGES } from "@/api/errorMessages"
 import { SUCCESS_MESSAGES } from "@/api/successMessages"
 import { AuthFormCard } from "@/components/AuthFormCard"
 import { FormField } from "@/components/FormField"
+import { SESSION_EXPIRED_TOAST_ID } from "@/constants/app"
 import { useForm } from "@/hooks/useForm"
 import type { LoginFormValues } from "@/interfaces/auth"
 import type { LoginRedirectState } from "@/interfaces/routes"
 import { getPathAfterLogin } from "@/routes/paths"
-import { loginUser } from "@/store/authSlice"
-import { useAppDispatch } from "@/store/hooks"
+import { loginUser, selectIsSessionExpired } from "@/store/authSlice"
+import { useAppDispatch, useAppSelector } from "@/store/hooks"
 import { buildLoginPayload } from "@/utils/authPayload"
 import { validateLoginForm } from "@/utils/authValidation"
 import { sanitizeFormValues } from "@/utils/sanitize"
@@ -29,6 +30,14 @@ export const LoginPage = () => {
 
   const { formValues, setFormErrors, getFieldProps } = useForm(INITIAL_LOGIN_FORM_VALUES)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const isSessionExpired = useAppSelector(selectIsSessionExpired)
+
+  // Sent here because a request answered 401: say why (the fixed id keeps it to one toast).
+  useEffect(() => {
+    if (isSessionExpired) {
+      toast.error(ERROR_MESSAGES.SESSION_EXPIRED, { id: SESSION_EXPIRED_TOAST_ID })
+    }
+  }, [isSessionExpired])
 
   const handleSubmit = async (event: SubmitEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault()
@@ -44,9 +53,8 @@ export const LoginPage = () => {
     const result = await dispatch(loginUser(buildLoginPayload(sanitizedValues)))
     setIsSubmitting(false)
 
-    // TODO: once the BE is ready, show its message (based on status code) instead of the UI text.
     if (loginUser.rejected.match(result)) {
-      toast.error(ERROR_MESSAGES.LOGIN_FAILED)
+      toast.error(result.payload?.message ?? ERROR_MESSAGES.LOGIN_FAILED)
       return
     }
 
@@ -65,14 +73,16 @@ export const LoginPage = () => {
     >
       <FormField
         label="Email or Student ID"
+        isRequired
         type="text"
         autoComplete="username"
         autoCapitalize="none"
-        placeholder="you@example.com or S100000001"
+        placeholder="e.g. S100000001"
         {...getFieldProps("identifier")}
       />
       <FormField
         label="Password"
+        isRequired
         type="password"
         autoComplete="current-password"
         {...getFieldProps("password")}

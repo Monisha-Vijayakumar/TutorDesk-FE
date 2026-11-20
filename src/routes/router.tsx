@@ -6,6 +6,8 @@ import { AdminLayout } from "@/layouts/AdminLayout"
 import { AuthLayout } from "@/layouts/AuthLayout"
 import { PublicLayout } from "@/layouts/PublicLayout"
 import { DashboardPage } from "@/pages/admin/DashboardPage"
+import { FeesPage } from "@/pages/admin/FeesPage"
+import { StudentsPage } from "@/pages/admin/StudentsPage"
 import { HomePage } from "@/pages/public/HomePage"
 import { LoginPage } from "@/pages/public/LoginPage"
 import { NotFoundPage, UnauthorizedPage } from "@/pages/public/StatusPage"
@@ -47,10 +49,9 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <Navigate to={PATHS.adminDashboard} replace /> },
           { path: PATHS.adminDashboard, element: <DashboardPage /> },
-          { path: PATHS.adminStudents, element: <PlaceholderPage title={ADMIN_PAGE_TITLES.STUDENTS} /> },
-          { path: PATHS.adminBatches, element: <PlaceholderPage title={ADMIN_PAGE_TITLES.BATCHES} /> },
+          { path: PATHS.adminStudents, element: <StudentsPage /> },
           { path: PATHS.adminAttendance, element: <PlaceholderPage title={ADMIN_PAGE_TITLES.ATTENDANCE} /> },
-          { path: PATHS.adminFees, element: <PlaceholderPage title={ADMIN_PAGE_TITLES.FEES} /> },
+          { path: PATHS.adminFees, element: <FeesPage /> },
           { path: PATHS.adminSettings, element: <PlaceholderPage title={ADMIN_PAGE_TITLES.SETTINGS} /> },
         ],
       },

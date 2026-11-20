@@ -11,23 +11,18 @@ export const API_ENDPOINTS = {
   STUDENTS: {
     LIST: "/students",
     DETAILS: (studentId: string) => `/students/${studentId}`,
-    PAYMENTS: (studentId: string) => `/students/${studentId}/payments`,
+    // Payment transactions and payment reminders for one student, all months.
+    PAYMENT_HISTORY: (studentId: string) => `/students/${studentId}/payment-history`,
     RESET_PASSWORD: (studentId: string) => `/students/${studentId}/reset-password`,
-  },
-  BATCHES: {
-    LIST: "/batches",
-    DETAILS: (batchId: string) => `/batches/${batchId}`,
-    STUDENTS: (batchId: string) => `/batches/${batchId}/students`,
-    STUDENT: (batchId: string, studentId: string) => `/batches/${batchId}/students/${studentId}`,
   },
   ATTENDANCE: {
     LIST: "/attendance",
   },
+  // One fee record per student per month (REQUIREMENTS §4.5).
   FEES: {
     LIST: "/fees",
-  },
-  PAYMENTS: {
-    LIST: "/payments",
+    DETAILS: (feeId: string) => `/fees/${feeId}`,
+    REMINDERS: (feeId: string) => `/fees/${feeId}/reminders`,
   },
   DASHBOARD: {
     STATS: "/dashboard/stats",

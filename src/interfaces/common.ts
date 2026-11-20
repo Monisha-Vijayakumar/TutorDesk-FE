@@ -1,4 +1,6 @@
 import type { ReactNode } from "react"
+import type { LucideIcon } from "lucide-react"
+import type { PaymentStatus } from "@/api/interfaces/fee"
 
 export interface TextLinkProps {
   to: string
@@ -25,4 +27,37 @@ export interface AppLogoProps {
 
 export interface PlaceholderPageProps {
   title: string
+}
+
+export interface PageHeaderProps {
+  title: string
+  description?: string
+  action?: ReactNode
+}
+
+export interface EmptyStateProps {
+  icon: LucideIcon
+  title: string
+  description?: string
+  action?: ReactNode
+}
+
+export interface StatusBadgeProps {
+  status: PaymentStatus
+}
+
+export interface CompactBadgeListProps {
+  items: string[]
+  maxVisibleItems: number
+}
+
+export interface ConfirmDialogProps {
+  isOpen: boolean
+  title: string
+  description: string
+  confirmLabel: string
+  pendingLabel: string
+  isPending: boolean
+  onConfirm: () => void
+  onOpenChange: (isOpen: boolean) => void
 }
