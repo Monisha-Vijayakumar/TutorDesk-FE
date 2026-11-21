@@ -26,7 +26,7 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
     // Like the seeded admin: has to change the seeded password after the first login.
     user: {
       id: "demo-admin",
-      name: "Monisha Vijayakumar",
+      name: "Admin Demo User",
       email: "admin@tutordesk.com",
       role: USER_ROLES.ADMIN,
       phone: "+919876543210",
