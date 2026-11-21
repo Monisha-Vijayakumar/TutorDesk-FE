@@ -2,10 +2,12 @@ import { useEffect, useState, type SubmitEvent } from "react"
 import { useLocation, useNavigate } from "react-router"
 import { toast } from "sonner"
 import { ERROR_MESSAGES } from "@/api/errorMessages"
+import { DEMO_ACCOUNTS } from "@/api/mocks/mockAuthService"
 import { SUCCESS_MESSAGES } from "@/api/successMessages"
 import { AuthFormCard } from "@/components/AuthFormCard"
 import { FormField } from "@/components/FormField"
-import { SESSION_EXPIRED_TOAST_ID } from "@/constants/app"
+import { IS_MOCK_API_ENABLED, SESSION_EXPIRED_TOAST_ID } from "@/constants/app"
+import { USER_ROLES } from "@/constants/userRoles"
 import { useForm } from "@/hooks/useForm"
 import type { LoginFormValues } from "@/interfaces/auth"
 import type { LoginRedirectState } from "@/interfaces/routes"
@@ -17,10 +19,23 @@ import { validateLoginForm } from "@/utils/authValidation"
 import { sanitizeFormValues } from "@/utils/sanitize"
 import { hasValidationErrors } from "@/utils/validation"
 
-const INITIAL_LOGIN_FORM_VALUES: LoginFormValues = {
+const EMPTY_LOGIN_FORM_VALUES: LoginFormValues = {
   identifier: "",
   password: "",
 }
+
+// Demo mode: the admin login is filled in, so one click opens the dashboard.
+// The inline DEV check lets Vite drop this branch from production builds, so the demo account isn't bundled.
+const getDemoAdminLoginFormValues = (): LoginFormValues => {
+  const demoAdmin = DEMO_ACCOUNTS.find((account) => account.user.role === USER_ROLES.ADMIN)
+  return demoAdmin
+    ? { identifier: demoAdmin.identifier, password: demoAdmin.password }
+    : EMPTY_LOGIN_FORM_VALUES
+}
+
+const INITIAL_LOGIN_FORM_VALUES = import.meta.env.DEV && IS_MOCK_API_ENABLED
+  ? getDemoAdminLoginFormValues()
+  : EMPTY_LOGIN_FORM_VALUES
 
 // Shows only the email login for now: the student portal is on hold, so the UI says nothing about
 // Student IDs. The form, validation and API still accept a Student ID (identifier), ready for later.
