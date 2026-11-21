@@ -25,7 +25,6 @@ const EMPTY_LOGIN_FORM_VALUES: LoginFormValues = {
 }
 
 // Demo mode: the admin login is filled in, so one click opens the dashboard.
-// The inline DEV check lets Vite drop this branch from production builds, so the demo account isn't bundled.
 const getDemoAdminLoginFormValues = (): LoginFormValues => {
   const demoAdmin = DEMO_ACCOUNTS.find((account) => account.user.role === USER_ROLES.ADMIN)
   return demoAdmin
@@ -33,7 +32,7 @@ const getDemoAdminLoginFormValues = (): LoginFormValues => {
     : EMPTY_LOGIN_FORM_VALUES
 }
 
-const INITIAL_LOGIN_FORM_VALUES = import.meta.env.DEV && IS_MOCK_API_ENABLED
+const INITIAL_LOGIN_FORM_VALUES = IS_MOCK_API_ENABLED
   ? getDemoAdminLoginFormValues()
   : EMPTY_LOGIN_FORM_VALUES
 

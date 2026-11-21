@@ -14,5 +14,5 @@ export const SESSION_EXPIRED_TOAST_ID = "session-expired"
 // Must match SIDEBAR_COOKIE_NAME in src/components/ui/sidebar.tsx (generated file).
 export const SIDEBAR_STATE_COOKIE_NAME = "sidebar_state"
 
-// Demo login without a BE. Only possible in `npm run dev`; production builds always use the real API.
-export const IS_MOCK_API_ENABLED = import.meta.env.DEV && import.meta.env.VITE_USE_MOCK_API === "true"
+// Demo mode without a BE (VITE_USE_MOCK_API=true), also on the deployed site until the BE is ready.
+export const IS_MOCK_API_ENABLED = import.meta.env.VITE_USE_MOCK_API === "true"
