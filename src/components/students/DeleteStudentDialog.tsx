@@ -10,7 +10,7 @@ import { deleteStudent } from "@/store/studentSlice"
 import { formatFullName } from "@/utils/format"
 
 // Confirms before deleting. Deleting is how a student who has discontinued is removed: the BE
-// soft-deletes (record and payment/attendance history stay in the DB), and the student
+// soft-deletes (record and payment history stay in the DB), and the student
 // disappears from the list and can no longer log in.
 export const DeleteStudentDialog = ({ student, onClose, onDeleted }: DeleteStudentDialogProps) => {
   const dispatch = useAppDispatch()

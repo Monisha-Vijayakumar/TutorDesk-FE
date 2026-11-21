@@ -39,6 +39,14 @@ export const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
 }
 
 // "All" option of the payment status filter; never sent to the API.
+// What each status means (FR-26), e.g. under the dashboard's payment status list.
+export const PAYMENT_STATUS_DESCRIPTIONS: Record<PaymentStatus, string> = {
+  PAID: "The month's fee is fully paid.",
+  PARTIAL: "Part of the fee is paid and the due date hasn't passed yet.",
+  PENDING: "Nothing is paid yet, but the due date hasn't passed yet.",
+  OVERDUE: "Money is still unpaid after the due date (even if part was paid).",
+}
+
 export const ALL_PAYMENT_STATUSES = "ALL"
 
 export const PAYMENT_STATUS_FILTER_OPTIONS: SelectOption[] = [
@@ -60,6 +68,9 @@ export const CURRENCY_LOCALE = "en-IN"
 
 // Default day of the month fees are due (configurable in Settings later, FR-27).
 export const DEFAULT_FEE_DUE_DAY = 10
+// The due day is a day every month has (no 29th–31st).
+export const MIN_FEE_DUE_DAY = 1
+export const MAX_FEE_DUE_DAY = 28
 
 // How many months the Fees page month picker offers (this month and the ones before it).
 export const FEE_MONTH_PICKER_COUNT = 12

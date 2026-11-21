@@ -1,7 +1,7 @@
 import { Outlet } from "react-router"
 import publicBackgroundUrl from "@/assets/backgrounds/publicBackground.webp"
 
-// Shared background for the public pages (home, login, 404, unauthorized).
+// Shared background for the login, 404 and unauthorized pages (the landing page has its own design).
 // Photo: "Glasses, notebooks, and pencils on a white desk" by Jess Bailey on Unsplash
 // (https://unsplash.com/photos/k5BvNg8-SRA) — free under the Unsplash License.
 export const PublicLayout = () => {

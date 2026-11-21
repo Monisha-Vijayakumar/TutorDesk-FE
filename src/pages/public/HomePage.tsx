@@ -1,32 +1,23 @@
-import { Link } from "react-router"
-import { AppLogo } from "@/components/AppLogo"
-import { buttonVariants } from "@/components/ui/button"
-import { APP_NAME } from "@/constants/app"
-import { PATHS } from "@/routes/paths"
+import { LandingCallToAction } from "@/components/landing/LandingCallToAction"
+import { LandingFaq } from "@/components/landing/LandingFaq"
+import { LandingFeatures } from "@/components/landing/LandingFeatures"
+import { LandingHero } from "@/components/landing/LandingHero"
+import { LandingHowItWorks } from "@/components/landing/LandingHowItWorks"
+import { LandingNavbar } from "@/components/landing/LandingNavbar"
 
-// Shared by the tutor (admin) and students. No public signup: the admin account is created
-// by the BE seeder and student accounts are created by the admin.
+// The landing page — the first page of the app, for tutors and students alike (REQUIREMENTS §5.1).
+// No sign-up: the admin comes from the seeder, students from the admin; everyone uses Log in.
 export const HomePage = () => {
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center gap-6 px-4 py-10 text-center">
-      <AppLogo size="lg" isNameVisible={false} />
-      <h1 className="font-heading text-3xl font-semibold sm:text-4xl">{APP_NAME}</h1>
-
-      <div className="flex max-w-md flex-col gap-2">
-        <p className="text-xl font-medium text-foreground">Your tuition center, all in one place.</p>
-        <p className="text-sm">
-          <span className="font-medium text-foreground">Tutors</span> manage students, attendance
-          and fees.
-        </p>
-        <p className="text-sm">
-          <span className="font-medium text-foreground">Students</span> check their attendance and
-          fee status.
-        </p>
-      </div>
-
-      <Link to={PATHS.login} className={buttonVariants({ size: "lg" })}>
-        Log in
-      </Link>
+    <div className="min-h-svh bg-background">
+      <LandingNavbar />
+      <main>
+        <LandingHero />
+        <LandingFeatures />
+        <LandingHowItWorks />
+        <LandingFaq />
+        <LandingCallToAction />
+      </main>
     </div>
   )
 }

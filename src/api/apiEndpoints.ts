@@ -7,6 +7,7 @@ export const API_ENDPOINTS = {
     LOGOUT: "/auth/logout",
     CURRENT_USER: "/auth/me",
     CHANGE_PASSWORD: "/auth/change-password",
+    UPDATE_PROFILE: "/auth/profile",
   },
   STUDENTS: {
     LIST: "/students",
@@ -15,8 +16,11 @@ export const API_ENDPOINTS = {
     PAYMENT_HISTORY: (studentId: string) => `/students/${studentId}/payment-history`,
     RESET_PASSWORD: (studentId: string) => `/students/${studentId}/reset-password`,
   },
-  ATTENDANCE: {
-    LIST: "/attendance",
+  BATCHES: {
+    LIST: "/batches",
+    DETAILS: (batchId: string) => `/batches/${batchId}`,
+    // Distinct start/end times of the batches, for the Batch Time filter.
+    TIME_SLOTS: "/batches/time-slots",
   },
   // One fee record per student per month (REQUIREMENTS §4.5).
   FEES: {
@@ -26,18 +30,15 @@ export const API_ENDPOINTS = {
   },
   DASHBOARD: {
     STATS: "/dashboard/stats",
+    FEE_COLLECTION: "/dashboard/fee-collection",
   },
   STUDENT_PORTAL: {
     SUMMARY: "/me/summary",
-    ATTENDANCE: "/me/attendance",
     FEES: "/me/fees",
   },
   NOTIFICATIONS: {
     LIST: "/notifications",
     MARK_AS_READ: (notificationId: string) => `/notifications/${notificationId}/read`,
     MARK_ALL_AS_READ: "/notifications/read-all",
-  },
-  SETTINGS: {
-    UPDATE: "/settings",
   },
 } as const

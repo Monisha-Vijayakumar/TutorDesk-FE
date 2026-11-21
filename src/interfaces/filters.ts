@@ -3,6 +3,15 @@ import type { OnChangeFn, PaginationState } from "@tanstack/react-table"
 import type { PaymentSearchParams, PaymentStatus } from "@/api/interfaces/fee"
 import type { ALL_PAYMENT_STATUSES } from "@/constants/fees"
 
+export interface SearchInputProps {
+  id: string
+  label: string
+  placeholder: string
+  value: string
+  onValueChange: (value: string) => void
+  className?: string
+}
+
 // Search + payment filters shared by the Students and Fees pages.
 
 export type PaymentStatusFilter = PaymentStatus | typeof ALL_PAYMENT_STATUSES

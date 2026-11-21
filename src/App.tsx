@@ -1,5 +1,6 @@
 import { useEffect } from "react"
-import { RouterProvider } from "react-router"
+// The react-router/dom RouterProvider can render navigations with ReactDOM.flushSync (used by logout).
+import { RouterProvider } from "react-router/dom"
 import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { TOAST_DURATION_MS, TOAST_POSITION } from "@/constants/app"

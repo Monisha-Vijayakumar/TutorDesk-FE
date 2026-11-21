@@ -1,10 +1,20 @@
+import blacklist from "validator/es/lib/blacklist"
 import isAfter from "validator/es/lib/isAfter"
+import isAlpha from "validator/es/lib/isAlpha"
 import isEmpty from "validator/es/lib/isEmpty"
 import isLength from "validator/es/lib/isLength"
+import isMobilePhone from "validator/es/lib/isMobilePhone"
 import isNumeric from "validator/es/lib/isNumeric"
 import type { ApiError } from "@/api/interfaces/common"
-import { STUDENT_CODE_DIGIT_COUNT, STUDENT_CODE_PREFIX, VALIDATION_MESSAGES } from "@/constants/validation"
-import type { FormErrors } from "@/interfaces/form"
+import {
+  ALPHA_LOCALE,
+  PHONE_LOCALE,
+  PHONE_SEPARATORS,
+  STUDENT_CODE_DIGIT_COUNT,
+  STUDENT_CODE_PREFIX,
+  VALIDATION_MESSAGES,
+} from "@/constants/validation"
+import type { AlphaFieldOptions, FormErrors } from "@/interfaces/form"
 
 export const hasValidationErrors = (errors: object): boolean => {
   return Object.keys(errors).length > 0
@@ -56,4 +66,36 @@ export const validatePaymentDateRange = (paidFrom: string, paidTo: string): stri
     return undefined
   }
   return isAfter(paidFrom, paidTo) ? VALIDATION_MESSAGES.DATE_RANGE_INVALID : undefined
+}
+
+// Name and place fields (NFR-17): letters plus what alphaOptions allows (ALPHA_WITH_SPACES_OPTIONS or
+// ALPHA_WITH_PUNCTUATION_OPTIONS). Optional fields (no requiredMessage) are only checked when filled.
+export const validateAlphaField = (
+  value: string,
+  alphaOptions: AlphaFieldOptions,
+  invalidMessage: string,
+  requiredMessage?: string
+): string | undefined => {
+  if (isEmpty(value)) {
+    return requiredMessage
+  }
+  if (!isAlpha(value, ALPHA_LOCALE, alphaOptions)) {
+    return invalidMessage
+  }
+  return undefined
+}
+
+// Indian mobile numbers. Spaces and dashes typed are ignored. Optional numbers are only checked when filled.
+export const validateMobileNumber = (
+  value: string,
+  invalidMessage: string,
+  requiredMessage?: string
+): string | undefined => {
+  if (isEmpty(value)) {
+    return requiredMessage
+  }
+  if (!isMobilePhone(blacklist(value, PHONE_SEPARATORS), PHONE_LOCALE)) {
+    return invalidMessage
+  }
+  return undefined
 }

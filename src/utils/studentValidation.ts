@@ -1,50 +1,29 @@
-import blacklist from "validator/es/lib/blacklist"
-import isAlpha from "validator/es/lib/isAlpha"
 import isDate from "validator/es/lib/isDate"
 import isEmail from "validator/es/lib/isEmail"
 import isEmpty from "validator/es/lib/isEmpty"
 import isIn from "validator/es/lib/isIn"
 import isInt from "validator/es/lib/isInt"
-import isMobilePhone from "validator/es/lib/isMobilePhone"
 import isStrongPassword from "validator/es/lib/isStrongPassword"
 import { hasApiErrorStatus } from "@/api/apiErrorHandler"
 import { HTTP_STATUS } from "@/api/httpStatus"
 import type { ApiError } from "@/api/interfaces/common"
 import { GRADE_OPTIONS, MAX_MONTHLY_FEE_RUPEES } from "@/constants/students"
-import {
-  ALPHA_LOCALE,
-  ALPHA_WITH_SPACES_OPTIONS,
-  PHONE_LOCALE,
-  PHONE_SEPARATORS,
-  VALIDATION_MESSAGES,
-} from "@/constants/validation"
+import { ALPHA_WITH_SPACES_OPTIONS, VALIDATION_MESSAGES } from "@/constants/validation"
 import type { FormErrors } from "@/interfaces/form"
 import type { StudentFormValues } from "@/interfaces/students"
-import { getFormErrorsFromApi, keepFieldErrors } from "@/utils/validation"
+import { getFormErrorsFromApi, keepFieldErrors, validateAlphaField, validateMobileNumber } from "@/utils/validation"
 
 const ISO_DATE_OPTIONS = { format: "YYYY-MM-DD", strictMode: true, delimiters: ["-"] }
 const GRADE_VALUES = GRADE_OPTIONS.map((option) => option.value)
 
-// Person names: letters and spaces only (NFR-17). Optional names are only checked when filled.
-const validatePersonName = (value: string, requiredMessage?: string): string | undefined => {
-  if (isEmpty(value)) {
-    return requiredMessage
-  }
-  if (!isAlpha(value, ALPHA_LOCALE, ALPHA_WITH_SPACES_OPTIONS)) {
-    return VALIDATION_MESSAGES.LETTERS_ONLY
-  }
-  return undefined
+// Person names: letters and spaces only (NFR-17).
+const validatePersonName = (value: string, requiredMessage: string): string | undefined => {
+  return validateAlphaField(value, ALPHA_WITH_SPACES_OPTIONS, VALIDATION_MESSAGES.LETTERS_ONLY, requiredMessage)
 }
 
-// Optional phones are only checked when filled. Spaces and dashes are allowed while typing.
+// WhatsApp numbers; optional ones (no requiredMessage) are only checked when filled.
 const validatePhone = (value: string, requiredMessage?: string): string | undefined => {
-  if (isEmpty(value)) {
-    return requiredMessage
-  }
-  if (!isMobilePhone(blacklist(value, PHONE_SEPARATORS), PHONE_LOCALE)) {
-    return VALIDATION_MESSAGES.PHONE_INVALID
-  }
-  return undefined
+  return validateMobileNumber(value, VALIDATION_MESSAGES.PHONE_INVALID, requiredMessage)
 }
 
 const validateMonthlyFee = (value: string): string | undefined => {

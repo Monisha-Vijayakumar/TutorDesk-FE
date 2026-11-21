@@ -1,27 +1,26 @@
 import { createBrowserRouter, Navigate } from "react-router"
-import { PlaceholderPage } from "@/components/PlaceholderPage"
-import { ADMIN_PAGE_TITLES } from "@/constants/navigation"
+import { FullPageLoader } from "@/components/FullPageLoader"
 import { USER_ROLES } from "@/constants/userRoles"
-import { AdminLayout } from "@/layouts/AdminLayout"
 import { AuthLayout } from "@/layouts/AuthLayout"
 import { PublicLayout } from "@/layouts/PublicLayout"
-import { DashboardPage } from "@/pages/admin/DashboardPage"
-import { FeesPage } from "@/pages/admin/FeesPage"
-import { StudentsPage } from "@/pages/admin/StudentsPage"
 import { HomePage } from "@/pages/public/HomePage"
 import { LoginPage } from "@/pages/public/LoginPage"
-import { NotFoundPage, UnauthorizedPage } from "@/pages/public/StatusPage"
-import { StudentHomePage } from "@/pages/student/StudentHomePage"
+import { NotFoundPage, PageLoadErrorPage, UnauthorizedPage } from "@/pages/public/StatusPage"
 import { PATHS } from "./paths"
 import { ProtectedRoute } from "./ProtectedRoute"
 import { PublicOnlyRoute } from "./PublicOnlyRoute"
 
+// Public pages are in the main bundle (almost every visit starts there). Every portal module — the admin
+// shell and each admin page, the student portal — is lazy-loaded: its code is downloaded only when the
+// user first opens it (React Router `lazy`, one chunk per module; Recharts only comes with the Dashboard).
 export const router = createBrowserRouter([
-  // Public pages share the background image from PublicLayout
+  // Landing page: its own navbar and sections (no background photo).
+  { path: PATHS.home, element: <HomePage /> },
+
+  // Login, 404 and Unauthorized share the background image from PublicLayout
   {
     element: <PublicLayout />,
     children: [
-      { path: PATHS.home, element: <HomePage /> },
       { path: PATHS.unauthorized, element: <UnauthorizedPage /> },
 
       // Public only: logged-in users are redirected to their home page
@@ -39,20 +38,53 @@ export const router = createBrowserRouter([
     ],
   },
 
-  // Admin: sidebar + top bar. Pages not built yet show a placeholder.
+  // Admin: sidebar + top bar. The loader shows while the first module downloads on a direct visit;
+  // a module that fails to download (offline, new deploy) shows the error page with Reload.
   {
     path: PATHS.admin,
     element: <ProtectedRoute allowedRoles={[USER_ROLES.ADMIN]} />,
+    hydrateFallbackElement: <FullPageLoader />,
+    errorElement: <PageLoadErrorPage />,
     children: [
       {
-        element: <AdminLayout />,
+        lazy: async () => ({ Component: (await import("@/layouts/AdminLayout")).AdminLayout }),
         children: [
           { index: true, element: <Navigate to={PATHS.adminDashboard} replace /> },
-          { path: PATHS.adminDashboard, element: <DashboardPage /> },
-          { path: PATHS.adminStudents, element: <StudentsPage /> },
-          { path: PATHS.adminAttendance, element: <PlaceholderPage title={ADMIN_PAGE_TITLES.ATTENDANCE} /> },
-          { path: PATHS.adminFees, element: <FeesPage /> },
-          { path: PATHS.adminSettings, element: <PlaceholderPage title={ADMIN_PAGE_TITLES.SETTINGS} /> },
+          {
+            path: PATHS.adminDashboard,
+            lazy: async () => ({ Component: (await import("@/pages/admin/DashboardPage")).DashboardPage }),
+          },
+          {
+            path: PATHS.adminStudents,
+            lazy: async () => ({ Component: (await import("@/pages/admin/StudentsPage")).StudentsPage }),
+          },
+          {
+            path: PATHS.adminBatches,
+            lazy: async () => ({ Component: (await import("@/pages/admin/BatchesPage")).BatchesPage }),
+          },
+          {
+            path: PATHS.adminFees,
+            lazy: async () => ({ Component: (await import("@/pages/admin/FeesPage")).FeesPage }),
+          },
+          {
+            path: PATHS.adminSettings,
+            lazy: async () => ({ Component: (await import("@/layouts/SettingsLayout")).SettingsLayout }),
+            children: [
+              { index: true, element: <Navigate to={PATHS.adminSettingsProfile} replace /> },
+              {
+                path: PATHS.adminSettingsProfile,
+                lazy: async () => ({
+                  Component: (await import("@/pages/admin/settings/ProfileSettingsPage")).ProfileSettingsPage,
+                }),
+              },
+              {
+                path: PATHS.adminSettingsPassword,
+                lazy: async () => ({
+                  Component: (await import("@/pages/admin/settings/UpdatePasswordPage")).UpdatePasswordPage,
+                }),
+              },
+            ],
+          },
         ],
       },
     ],
@@ -62,9 +94,14 @@ export const router = createBrowserRouter([
   {
     path: PATHS.student,
     element: <ProtectedRoute allowedRoles={[USER_ROLES.STUDENT]} />,
+    hydrateFallbackElement: <FullPageLoader />,
+    errorElement: <PageLoadErrorPage />,
     children: [
       { index: true, element: <Navigate to={PATHS.studentHome} replace /> },
-      { path: PATHS.studentHome, element: <StudentHomePage /> },
+      {
+        path: PATHS.studentHome,
+        lazy: async () => ({ Component: (await import("@/pages/student/StudentHomePage")).StudentHomePage }),
+      },
     ],
   },
 ])

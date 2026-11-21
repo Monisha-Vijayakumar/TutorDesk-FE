@@ -24,12 +24,20 @@ export interface FormFieldErrorProps {
   error?: string
 }
 
-// Props that connect a <FormField> to a value in the form.
+export interface FormTextareaFieldProps extends ComponentProps<"textarea"> {
+  id: string
+  label: string
+  error?: string
+  hint?: string
+  isRequired?: boolean
+}
+
+// Props that connect a <FormField> or <FormTextareaField> to a value in the form.
 export interface FormFieldBindings {
   id: string
   name: string
   value: string
-  onChange: (event: ChangeEvent<HTMLInputElement>) => void
+  onChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
   error?: string
 }
 
@@ -40,6 +48,12 @@ export interface UseFormResult<TFormValues> {
   // For non-text fields (selects, checkbox groups, switches).
   setFieldValue: <TFieldName extends keyof TFormValues>(fieldName: TFieldName, value: TFormValues[TFieldName]) => void
   getFieldProps: (fieldName: TextFieldName<TFormValues>) => FormFieldBindings
+  resetForm: () => void
+}
+
+// isAlpha options for name and place fields (ALPHA_WITH_SPACES_OPTIONS / ALPHA_WITH_PUNCTUATION_OPTIONS).
+export interface AlphaFieldOptions {
+  ignore: string
 }
 
 export interface SelectOption {

@@ -1,6 +1,10 @@
 import type { ReactNode } from "react"
 import type { LucideIcon } from "lucide-react"
 import type { PaymentStatus } from "@/api/interfaces/fee"
+import type { TONE_CLASSES } from "@/constants/tones"
+
+// A colour theme from TONE_CLASSES (blue, magenta, green, orange, aqua).
+export type Tone = keyof typeof TONE_CLASSES
 
 export interface TextLinkProps {
   to: string
@@ -11,6 +15,7 @@ export interface StatusPageProps {
   statusCode: string
   title: string
   message: string
+  action?: ReactNode // replaces the default "Go home" link
 }
 
 export interface SafeHtmlProps {
@@ -23,10 +28,6 @@ export interface AppLogoProps {
   size?: "sm" | "lg"
   isNameVisible?: boolean
   className?: string
-}
-
-export interface PlaceholderPageProps {
-  title: string
 }
 
 export interface PageHeaderProps {

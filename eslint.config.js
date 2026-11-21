@@ -30,7 +30,9 @@ export default defineConfig([
     },
   },
   {
-    files: ['src/components/SafeHtml.tsx'],
+    // SafeHtml sanitizes with DOMPurify. shadcn's chart.tsx writes a <style> tag of CSS colour variables
+    // built from our own chart config (never user data), so it's safe too.
+    files: ['src/components/SafeHtml.tsx', 'src/components/ui/chart.tsx'],
     rules: {
       'no-restricted-syntax': 'off',
     },

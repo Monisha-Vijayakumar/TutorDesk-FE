@@ -1,13 +1,13 @@
 import { useState, type ChangeEvent } from "react"
 import type { FormErrors, FormFieldBindings, TextFieldName, UseFormResult } from "@/interfaces/form"
 
-// Holds the values and errors of a form. Text inputs bind with getFieldProps (each input's
+// Holds the values and errors of a form. Text inputs and textareas bind with getFieldProps (each input's
 // `name` must match a key in the form values); selects, checkbox groups and switches use setFieldValue.
 export const useForm = <TFormValues extends object>(initialValues: TFormValues): UseFormResult<TFormValues> => {
   const [formValues, setFormValues] = useState<TFormValues>(initialValues)
   const [formErrors, setFormErrors] = useState<FormErrors<TFormValues>>({})
 
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     const { name, value } = event.target
     setFormValues((previousValues) => ({ ...previousValues, [name]: value }))
   }
@@ -29,5 +29,11 @@ export const useForm = <TFormValues extends object>(initialValues: TFormValues):
     }
   }
 
-  return { formValues, formErrors, setFormErrors, setFieldValue, getFieldProps }
+  // Back to the starting values with no errors (e.g. after a password change).
+  const resetForm = (): void => {
+    setFormValues(initialValues)
+    setFormErrors({})
+  }
+
+  return { formValues, formErrors, setFormErrors, setFieldValue, getFieldProps, resetForm }
 }

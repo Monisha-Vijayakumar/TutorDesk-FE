@@ -19,7 +19,7 @@ export interface AuthState {
 
 export interface AuthFormCardProps {
   title: string
-  description: string
+  description?: string
   submitLabel: string
   submittingLabel: string
   isSubmitting: boolean

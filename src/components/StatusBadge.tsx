@@ -4,7 +4,7 @@ import { PAYMENT_STATUS_LABELS } from "@/constants/fees"
 import type { StatusBadgeProps } from "@/interfaces/common"
 import { cn } from "@/lib/utils"
 
-// Paid green, Pending amber, Overdue red, Partially Paid blue. Attendance statuses get added here later.
+// Paid green, Pending amber, Overdue red, Partially Paid blue.
 const STATUS_BADGE_CLASSES: Record<PaymentStatus, string> = {
   PAID: "border-emerald-200 bg-emerald-50 text-emerald-700",
   PENDING: "border-amber-200 bg-amber-50 text-amber-800",

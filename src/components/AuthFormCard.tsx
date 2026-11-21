@@ -27,7 +27,7 @@ export const AuthFormCard = ({
     <Card className={cn("w-full max-w-sm", className)}>
       <CardHeader>
         <CardTitle className="text-xl text-center">{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+        {description && <CardDescription>{description}</CardDescription>}
       </CardHeader>
 
       <form onSubmit={onSubmit} noValidate className="contents">

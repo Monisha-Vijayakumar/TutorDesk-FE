@@ -1,9 +1,8 @@
-import { RotateCcw, Search, X } from "lucide-react"
+import { RotateCcw } from "lucide-react"
 import { FormField } from "@/components/FormField"
 import { FormSelectField } from "@/components/FormSelectField"
+import { SearchInput } from "@/components/SearchInput"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { PAYMENT_STATUS_FILTER_OPTIONS } from "@/constants/fees"
 import type { PaymentSearchFiltersProps, PaymentStatusFilter } from "@/interfaces/filters"
 import { cn } from "@/lib/utils"
@@ -41,35 +40,14 @@ export const PaymentSearchFilters = ({
   return (
     <div className={cn("grid gap-3 rounded-lg border bg-background p-4", layout.grid)}>
       {leadingFilter}
-      <div className={cn("flex flex-col gap-1.5", layout.search)}>
-        <Label htmlFor="student-search">Search</Label>
-        <div className="relative">
-          <Search
-            className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground"
-            aria-hidden="true"
-          />
-          <Input
-            id="student-search"
-            type="search"
-            className="h-10 pr-10 pl-8 md:h-9 [&::-webkit-search-cancel-button]:hidden"
-            placeholder="Search by Student ID or Name"
-            autoComplete="off"
-            value={filters.searchText}
-            onChange={(event) => onFilterChange("searchText", event.target.value)}
-          />
-          {filters.searchText && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute top-0 right-0 size-10 md:size-9"
-              onClick={() => onFilterChange("searchText", "")}
-              aria-label="Clear search"
-            >
-              <X />
-            </Button>
-          )}
-        </div>
-      </div>
+      <SearchInput
+        id="student-search"
+        label="Search"
+        placeholder="Search by Student ID or Name"
+        value={filters.searchText}
+        onValueChange={(value) => onFilterChange("searchText", value)}
+        className={layout.search}
+      />
 
       <FormSelectField
         id="payment-status-filter"

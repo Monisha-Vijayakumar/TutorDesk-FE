@@ -10,6 +10,7 @@ import type {
 import { HTTP_STATUS } from "@/api/httpStatus"
 import { PAISE_PER_RUPEE } from "@/constants/fees"
 import { STUDENT_CODE_PREFIX } from "@/constants/validation"
+import { toIsoDate } from "@/utils/date"
 import { createMockApiError } from "./mockApiError"
 import { getMockCurrentPaymentSummary } from "./mockFeeData"
 
@@ -23,6 +24,18 @@ const LAST_NAMES = ["Sharma", "Iyer", "Patel", "Nair", "Reddy", "Gupta", "Menon"
 const SEED_SUBJECTS = [["Mathematics"], ["Physics", "Chemistry"], ["Mathematics", "Science", "English"], ["Biology"]]
 const SEED_STUDENT_COUNT = 28
 const FIRST_STUDENT_NUMBER = 100000001
+// Seeded students joined over the last two years (the first one 23 months ago, the last one this month),
+// so the Fees page and the dashboard have two years of history that grows over time.
+const SEED_HISTORY_MONTHS = 24
+
+// Join date of the nth seeded student, relative to today (never in the future).
+const getSeedJoinDate = (index: number): string => {
+  const today = new Date()
+  const monthsBack = SEED_HISTORY_MONTHS - 1 - Math.floor((index * SEED_HISTORY_MONTHS) / SEED_STUDENT_COUNT)
+  const joinDay = (index * 5) % 25 + 1
+  const joinDate = new Date(today.getFullYear(), today.getMonth() - monthsBack, joinDay)
+  return toIsoDate(joinDate > today ? today : joinDate)
+}
 
 const createSeedStudent = (index: number): MockStudentRecord => {
   const firstName = FIRST_NAMES[index % FIRST_NAMES.length]
@@ -44,9 +57,9 @@ const createSeedStudent = (index: number): MockStudentRecord => {
     grade: `Class ${(index % 12) + 1}`,
     subjects: SEED_SUBJECTS[index % SEED_SUBJECTS.length],
     monthlyFee: (1500 + (index % 4) * 500) * PAISE_PER_RUPEE,
-    joinDate: "2026-06-01",
-    // Older students first in the seed, so the list (newest first) starts with the last one.
-    createdAt: new Date(Date.UTC(2026, 5, 1, 0, index)).toISOString(),
+    joinDate: getSeedJoinDate(index),
+    // Added on their join date, so the list (newest first) starts with the last one.
+    createdAt: `${getSeedJoinDate(index)}T09:${String(index).padStart(2, "0")}:00.000Z`,
     deletedAt: null,
   }
 }
@@ -176,7 +189,7 @@ export const updateMockStudent = (studentId: string, payload: UpdateStudentPaylo
   return toStudent(replaceMockStudent(studentIndex, getStudentDetails(payload)))
 }
 
-// Soft delete: the record stays (payment and attendance history is kept) but disappears from the API.
+// Soft delete: the record stays (payment history is kept) but disappears from the API.
 export const deleteMockStudent = (studentId: string): void => {
   replaceMockStudent(findCurrentMockStudentIndex(studentId), { deletedAt: new Date().toISOString() })
 }

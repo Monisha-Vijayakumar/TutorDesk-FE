@@ -16,6 +16,8 @@ export const ERROR_MESSAGES = {
 
   // Fallbacks for one action, used when the error has no status-specific message.
   LOGIN_FAILED: "Invalid email or password.",
+  PROFILE_UPDATE_FAILED: "Couldn't update your profile. Please try again.",
+  PASSWORD_CHANGE_FAILED: "Couldn't update your password. Please try again.",
   STUDENTS_LOAD_FAILED: "Couldn't load students. Please try again.",
   STUDENT_CREATE_FAILED: "Couldn't add the student. Please try again.",
   STUDENT_UPDATE_FAILED: "Couldn't update the student. Please try again.",
@@ -23,9 +25,19 @@ export const ERROR_MESSAGES = {
   // 404 on a student action: someone else deleted the student while this form/dialog was open.
   STUDENT_NOT_FOUND: "This student was already deleted. The list has been refreshed.",
   FEES_LOAD_FAILED: "Couldn't load fees. Please try again.",
+  DASHBOARD_LOAD_FAILED: "Couldn't load the dashboard. Please try again.",
+  FEE_COLLECTION_LOAD_FAILED: "Couldn't load the fee collection. Please try again.",
   FEE_UPDATE_FAILED: "Couldn't save the payment details. Please try again.",
   FEE_NOT_FOUND: "This student was deleted. The list has been refreshed.",
   PAYMENT_HISTORY_LOAD_FAILED: "Couldn't load the payment history.",
   // WhatsApp still opened; only saving the reminder record failed.
   REMINDER_RECORD_FAILED: "WhatsApp opened, but the reminder couldn't be saved in the history.",
+  BATCHES_LOAD_FAILED: "Couldn't load batches. Please try again.",
+  BATCH_LOAD_FAILED: "Couldn't load the batch details. Please try again.",
+  BATCH_CREATE_FAILED: "Couldn't add the batch. Please try again.",
+  BATCH_UPDATE_FAILED: "Couldn't update the batch. Please try again.",
+  BATCH_DELETE_FAILED: "Couldn't delete the batch. Please try again.",
+  // 404 on a batch action: someone else deleted the batch while it was open here.
+  BATCH_NOT_FOUND: "This batch was already deleted. The list has been refreshed.",
+  STUDENT_OPTIONS_LOAD_FAILED: "Couldn't load students. Please try again.",
 } as const

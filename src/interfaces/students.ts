@@ -25,6 +25,14 @@ export interface StudentState {
   listError: string | null // message of the last failed list request
   // The latest list request; responses of older ones (filters changed meanwhile) are ignored.
   listRequestId: string | null
+  // Students to pick from in other forms (e.g. assigning students to a batch), kept apart from the
+  // Students page list. Loaded with the same GET /students request.
+  options: Student[]
+  optionsTotal: number
+  hasLoadedOptions: boolean
+  isOptionsLoading: boolean
+  optionsError: string | null
+  optionsRequestId: string | null
 }
 
 // Search/filter types shared with the Fees page live in @/interfaces/filters.

@@ -117,7 +117,7 @@ export const StudentsPage = () => {
     <EmptyState
       icon={Users}
       title="No students found."
-      description="Add your first student to start tracking attendance and fees."
+      description="Add your first student to start tracking batches and fees."
       action={addStudentButton}
     />
   )

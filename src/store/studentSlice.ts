@@ -26,6 +26,12 @@ const initialState: StudentState = {
   isListLoading: false,
   listError: null,
   listRequestId: null,
+  options: [],
+  optionsTotal: 0,
+  hasLoadedOptions: false,
+  isOptionsLoading: false,
+  optionsError: null,
+  optionsRequestId: null,
 }
 
 // One page of students for the current search / filters. The page aborts it when the filters change
@@ -37,6 +43,19 @@ export const fetchStudents = createAsyncThunk<StudentListResponse, StudentListPa
       return await studentService.getStudents(params, signal)
     } catch (error) {
       return rejectWithValue(getApiError(error, ERROR_MESSAGES.STUDENTS_LOAD_FAILED))
+    }
+  }
+)
+
+// Students to choose from in another form (e.g. the batch form), with the same request as the list.
+// Stored apart from the list so the Students page keeps its own page and filters.
+export const fetchStudentOptions = createAsyncThunk<StudentListResponse, StudentListParams, { rejectValue: ApiError }>(
+  STUDENT_ACTION_TYPES.FETCH_STUDENT_OPTIONS,
+  async (params, { rejectWithValue, signal }) => {
+    try {
+      return await studentService.getStudents(params, signal)
+    } catch (error) {
+      return rejectWithValue(getApiError(error, ERROR_MESSAGES.STUDENT_OPTIONS_LOAD_FAILED))
     }
   }
 )
@@ -108,6 +127,32 @@ const studentSlice = createSlice({
       }
     })
 
+    builder.addCase(fetchStudentOptions.pending, (state, action) => {
+      state.isOptionsLoading = true
+      state.optionsError = null
+      state.optionsRequestId = action.meta.requestId
+    })
+
+    builder.addCase(fetchStudentOptions.fulfilled, (state, action) => {
+      if (action.meta.requestId !== state.optionsRequestId) {
+        return
+      }
+      state.options = action.payload.students
+      state.optionsTotal = action.payload.total
+      state.hasLoadedOptions = true
+      state.isOptionsLoading = false
+    })
+
+    builder.addCase(fetchStudentOptions.rejected, (state, action) => {
+      if (action.meta.requestId !== state.optionsRequestId) {
+        return
+      }
+      state.isOptionsLoading = false
+      if (!action.meta.aborted) {
+        state.optionsError = action.payload?.message ?? ERROR_MESSAGES.STUDENT_OPTIONS_LOAD_FAILED
+      }
+    })
+
     // Don't keep one session's data for the next login.
     builder.addCase(logoutUser.fulfilled, () => initialState)
   },
@@ -122,5 +167,15 @@ export const selectHasLoadedStudentList = (state: RootState): boolean => state.s
 export const selectIsStudentListLoading = (state: RootState): boolean => state.students.isListLoading
 
 export const selectStudentListError = (state: RootState): string | null => state.students.listError
+
+export const selectStudentOptions = (state: RootState): Student[] => state.students.options
+
+export const selectStudentOptionsTotal = (state: RootState): number => state.students.optionsTotal
+
+export const selectHasLoadedStudentOptions = (state: RootState): boolean => state.students.hasLoadedOptions
+
+export const selectIsStudentOptionsLoading = (state: RootState): boolean => state.students.isOptionsLoading
+
+export const selectStudentOptionsError = (state: RootState): string | null => state.students.optionsError
 
 export default studentSlice.reducer

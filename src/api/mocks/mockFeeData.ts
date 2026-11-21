@@ -109,11 +109,26 @@ const seedFeeMonth = (record: MockFeeRecord, seedIndex: number): void => {
     return
   }
 
-  const pattern = seedIndex % 5
-  if (pattern === 1) {
-    addMockPayment(record, halfFee, `${record.month}-05`, method) // partly paid, now overdue
-  } else if (pattern !== 0) {
-    addMockPayment(record, record.totalFee, `${record.month}-${padTwoDigits((seedIndex % 20) + 1)}`, method)
+  // Past months: mostly paid, on different days and in different ways each month, with some months
+  // paid in two parts, paid late, partly paid or never paid (those are overdue now).
+  const variant = (seedIndex * 7 + monthsAgo * 3) % 10
+  // In the joining month the fee is due on the join date (when after the usual due day): nothing is paid before it.
+  const earliestDay = Number(record.dueDate.slice(8, 10)) > DEFAULT_FEE_DUE_DAY ? Number(record.dueDate.slice(8, 10)) : 1
+  const lastDay = getDaysInMonth(record.month)
+  const paidDay = Math.min(Math.max(((seedIndex + monthsAgo * 2) % 9) + 1, earliestDay), lastDay)
+  const lateDay = Math.min(Math.max(((seedIndex + monthsAgo) % 14) + 15, earliestDay), lastDay)
+  if (variant === 0) {
+    return // never paid
+  }
+  if (variant === 1) {
+    addMockPayment(record, halfFee, `${record.month}-${padTwoDigits(paidDay)}`, method) // partly paid
+  } else if (variant === 2) {
+    addMockPayment(record, halfFee, `${record.month}-${padTwoDigits(paidDay)}`, method) // two parts
+    addMockPayment(record, record.totalFee - halfFee, `${record.month}-${padTwoDigits(lateDay)}`, method)
+  } else if (variant === 3) {
+    addMockPayment(record, record.totalFee, `${record.month}-${padTwoDigits(lateDay)}`, method) // paid late
+  } else {
+    addMockPayment(record, record.totalFee, `${record.month}-${padTwoDigits(paidDay)}`, method)
   }
 }
 
@@ -220,6 +235,30 @@ const findFeeAndStudent = (
     throw createMockApiError(HTTP_STATUS.NOT_FOUND, "Fee record not found.")
   }
   return { record, student }
+}
+
+// Dashboard: payments received between two dates (inclusive) by current students. The fee records
+// (and so the demo payments) of every month in the range are created first, as for GET /fees.
+export const getMockPaymentsBetween = (
+  fromDate: string,
+  toDate: string,
+  currentStudents: MockStudentRecord[]
+): MockPaymentRecord[] => {
+  let month = fromDate.slice(0, 7)
+  const lastMonth = toDate.slice(0, 7)
+  while (month <= lastMonth) {
+    const lastDayOfMonth = getLastDayOfMonth(month)
+    currentStudents
+      .filter((student) => student.joinDate <= lastDayOfMonth)
+      .forEach((student) => getMockFeeRecord(student, month))
+    const [year, monthNumber] = month.split("-").map(Number)
+    month = monthNumber === 12 ? `${year + 1}-01` : `${year}-${padTwoDigits(monthNumber + 1)}`
+  }
+
+  const currentStudentIds = new Set(currentStudents.map((student) => student.id))
+  return mockPayments.filter(
+    (payment) => currentStudentIds.has(payment.studentId) && payment.paidOn >= fromDate && payment.paidOn <= toDate
+  )
 }
 
 // Used for the Students list: this month's status, latest payment date and method.

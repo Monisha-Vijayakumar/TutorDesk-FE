@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, isRejectedWithValue } from "@reduxjs/too
 import { getApiError, hasApiErrorStatus } from "@/api/apiErrorHandler"
 import { ERROR_MESSAGES } from "@/api/errorMessages"
 import { HTTP_STATUS } from "@/api/httpStatus"
-import type { LoginPayload, User } from "@/api/interfaces/auth"
+import type { ChangePasswordPayload, LoginPayload, UpdateProfilePayload, User } from "@/api/interfaces/auth"
 import type { ApiError } from "@/api/interfaces/common"
 import { authService } from "@/api/services/authService"
 import { AUTH_ACTION_TYPES, AUTH_SLICE_NAME } from "@/constants/actionTypes"
@@ -49,6 +49,30 @@ export const logoutUser = createAsyncThunk(AUTH_ACTION_TYPES.LOGOUT, async () =>
   }
 })
 
+// Settings → Profile. The saved user replaces the stored one (top bar name, center name…).
+export const updateProfile = createAsyncThunk<User, UpdateProfilePayload, { rejectValue: ApiError }>(
+  AUTH_ACTION_TYPES.UPDATE_PROFILE,
+  async (payload, { rejectWithValue }) => {
+    try {
+      return await authService.updateProfile(payload)
+    } catch (error) {
+      return rejectWithValue(getApiError(error, ERROR_MESSAGES.PROFILE_UPDATE_FAILED))
+    }
+  }
+)
+
+// Settings → Update Password. A wrong current password is a 400 (not 401), so it never logs the user out.
+export const changePassword = createAsyncThunk<void, ChangePasswordPayload, { rejectValue: ApiError }>(
+  AUTH_ACTION_TYPES.CHANGE_PASSWORD,
+  async (payload, { rejectWithValue }) => {
+    try {
+      await authService.changePassword(payload)
+    } catch (error) {
+      return rejectWithValue(getApiError(error, ERROR_MESSAGES.PASSWORD_CHANGE_FAILED))
+    }
+  }
+)
+
 const authSlice = createSlice({
   name: AUTH_SLICE_NAME,
   initialState,
@@ -69,6 +93,17 @@ const authSlice = createSlice({
     builder.addCase(loginUser.fulfilled, (state, action) => {
       state.user = action.payload
       state.isSessionExpired = false
+    })
+
+    builder.addCase(updateProfile.fulfilled, (state, action) => {
+      state.user = action.payload
+    })
+
+    // The BE has cleared mustChangePassword, so the first-login redirect stops.
+    builder.addCase(changePassword.fulfilled, (state) => {
+      if (state.user) {
+        state.user.mustChangePassword = false
+      }
     })
 
     builder.addCase(logoutUser.fulfilled, (state) => {

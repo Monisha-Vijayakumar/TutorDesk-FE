@@ -7,13 +7,34 @@ export interface User {
   name: string
   email?: string // admin login email; for students only optional contact info (they can't log in with it)
   role: UserRole
-  // Admin only (center details, editable in Settings later). centerName signs the WhatsApp reminders.
+  // Admin only (set by the seeder, editable in Settings → Profile). centerName signs the WhatsApp reminders.
+  phone?: string
+  address?: string
   centerName?: string
   branch?: string | null
   city?: string
   state?: string
+  feeDueDay?: number // 1–28: day of the month new fee records are due
   studentCode?: string // students only: login "Student ID", e.g. S100000001
-  mustChangePassword?: boolean // true until a student replaces the temporary password
+  // True until the user replaces the password they were given (seeded admin, new or reset student).
+  mustChangePassword?: boolean
+}
+
+// Settings → Profile. Email and role can't be changed, so they're never sent.
+export interface UpdateProfilePayload {
+  name: string
+  phone: string
+  address: string
+  centerName: string
+  branch: string | null
+  city: string
+  state: string
+  feeDueDay: number
+}
+
+export interface ChangePasswordPayload {
+  currentPassword: string
+  newPassword: string
 }
 
 export interface LoginPayload {
@@ -32,6 +53,8 @@ export interface AuthService {
   login: (payload: LoginPayload) => Promise<User>
   logout: () => Promise<void>
   getCurrentUser: () => Promise<User>
+  updateProfile: (payload: UpdateProfilePayload) => Promise<User>
+  changePassword: (payload: ChangePasswordPayload) => Promise<void>
 }
 
 // Dev-only demo account used by the mock auth service.
@@ -40,3 +63,6 @@ export interface DemoAccount {
   password: string
   user: User
 }
+
+// DEV mock only: profile edits and password changes per demo user id, kept for the browser tab.
+export type DemoAccountChanges = Record<string, Pick<DemoAccount, "user" | "password">>

@@ -22,6 +22,8 @@ const INITIAL_LOGIN_FORM_VALUES: LoginFormValues = {
   password: "",
 }
 
+// Shows only the email login for now: the student portal is on hold, so the UI says nothing about
+// Student IDs. The form, validation and API still accept a Student ID (identifier), ready for later.
 export const LoginPage = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
@@ -65,19 +67,19 @@ export const LoginPage = () => {
   return (
     <AuthFormCard
       title="Log in"
-      description="Tutors use their email. Students use the Student ID shared by their tutor."
       submitLabel="Log in"
       submittingLabel="Logging in…"
       isSubmitting={isSubmitting}
       onSubmit={handleSubmit}
     >
       <FormField
-        label="Email or Student ID"
+        label="Email"
         isRequired
         type="text"
+        inputMode="email"
         autoComplete="username"
         autoCapitalize="none"
-        placeholder="e.g. S100000001"
+        placeholder="you@example.com"
         {...getFieldProps("identifier")}
       />
       <FormField
