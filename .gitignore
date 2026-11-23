@@ -24,9 +24,6 @@ dist-ssr
 *.sln
 *.sw?
 
-# Claude Code working files (kept outside the repo)
-CLAUDE.md
+# Claude Code personal files (project CLAUDE.md, memory.md, REQUIREMENTS.md are committed)
 CLAUDE.local.md
-memory.md
-REQUIREMENTS.md
-.claude/
+.claude/settings.local.json
